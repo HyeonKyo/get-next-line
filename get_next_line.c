@@ -11,52 +11,59 @@
 /* ************************************************************************** */
 
 #include "get_next_lines.h"
+#include <stdio.h>
 
 int		get_next_line(int fd, char **line)
 {
 	ssize_t		n_bytes;
-	char		*buf[MAX_FD]; //fd의 최댓값 넣기
-	static char	*str;
-	char		*tmp;
 	int			flag;
+	int			len;
+	char		*buf;
+	static char	*backup[FOPEN_MAX + 1];
+	char		*tmp;
 
-	flag = 0;
-	if (!buf[fd] || BUFFER_SIZE < 1 || fd < 0 || !*line ||
-		!(buf[fd] = (char *)malloc(BUFFER_SIZE + 1)))
+	if (!(buf = (char *)malloc(BUFFER_SIZE + 1)) || BUFFER_SIZE < 1
+		|| fd < 0 || fd > FOPEN_MAX || !*line || !buf)
 		return (-1);
-	n_bytes = read(fd, buf[fd], BUFFER_SIZE);
-	if (n_bytes < 0)
-		return (-1);
-	if (n_byte == 0)
-		buf[fd][ft_strlen + 1] = 0;
-	if (!*str)
-		str = ft_strdup(buf);
-	else
+	while (n_bytes = read(fd, buf, BUFFER_SIZE) > 0)
 	{
-		while (!tmp = ft_strchr(str, '\n') && !flag)
+		if (!*backup[fd])
+			backup[fd] = ft_strdup(buf);
+		flag = 1;
+		if (!(tmp = ft_strchr(backup[fd], '\n') + 1))
 		{
-			flag = 1;
-			ft_strcat(str, buf[fd]);
+			ft_strjoin(backup[fd], buf);
+			flag = 0;
 		}
-		if (!tmp)
+		if (tmp = ft_strchr(backup[fd], '\n') + 1)
 		{
-			*line = (char *)malloc((tmp - str + 1) * sizeof(char));
-			ft_strlcpy(*line, str, tmp - str);
-			ft_memmove(str, tmp, ft_strlen(tmp) + 1);
-			if (!flag)
-				ft_strcat(str, buf[fd]);
+			*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
+			ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
+			len = tmp - backup[fd];
+			ft_memmove(backup[fd], tmp, ft_strlen(tmp) + 1);
+			if (flag)
+				ft_strjoin(backup[fd], buf);
+			free(buf);
+			return (1);
 		}
-		else
-		{
-			// 읽었을 때 이전 문자열까지 합해서 개행이 없으면 *line에 무엇을?
-		}
+		ft_bzero(buf, BUFFER_SIZE + 1);
 	}
-	free(buf[fd]);
-	if (!n_bytes)
-		return (0);
-	return (1);
+	//n_bytes가 0일 경우 => 한 번의 작업 필요
+	//-1인 경우 => 에러이므로 free후 -1반환
 }
 
+int main()
+{
+	char *line;
+	int fd;
+
+	fd = open("text.txt", O_RDONLY);
+	get_next_line(fd, &line);
+	printf("%s\n", line);
+	close(fd);
+
+	return (0);
+}
 /*
  * 1. BUFFER_SIZE가 컴파일 시 랜덤 지정됨.
  *
@@ -80,4 +87,5 @@ int		get_next_line(int fd, char **line)
  *  - EOF까지 읽어서 read의 리턴값이 0인 경우인데,
  *    마지막 읽은 문자열 사이에 또는 이전에 저장된 버퍼 내에 개행문자가 있는 경우?
  *    => 그럼 개행 전 문자열을 line에 넣고 그 이후 문자열은 출력이 안됨.
- *    => 어떻게 처리?
+ *    => 어떻게 처리? 
+ **/
