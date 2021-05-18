@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:09 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/18 16:37:32 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/18 16:53:19 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int		get_next_line(int fd, char **line)
 		//buf없이 backup에개행이 없으면 buf와 backup을 합쳐줌.
 		if (!ft_strchr(backup[fd], '\n') && flag)
 		{
-			ft_strjoin(backup[fd], buf);
+			backup[fd] = ft_strjoin(backup[fd], buf);
 			flag = 0;
 		}
 		//다시 buf에 개행이 있다면 -> line에 할당하고 개행까지 복사해준 후 
@@ -51,7 +51,7 @@ int		get_next_line(int fd, char **line)
 			//buf를 backup에 합치지 않은 상태라면 합쳐줌.
 		}
 		if (flag)
-			ft_strjoin(backup[fd], buf);
+			backup[fd] = ft_strjoin(backup[fd], buf);
 		if (tmp)
 		{
 			free(buf);
