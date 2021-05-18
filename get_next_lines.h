@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:49:32 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/14 17:09:24 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/18 16:38:24 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 int		get_next_line(int fd, char **line);
 void	ft_bzero(void *ptr, size_t size);
-int		ft_strlen(char *str);
+size_t	ft_strlen(const char *str);
 char	*ft_strdup(char *src);
 void	*ft_memmove(void *dest, const void *src, size_t num);
 size_t	ft_strlcpy(char *dest, char *src, size_t size);

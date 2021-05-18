@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:41 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/14 16:49:00 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/18 16:37:24 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ void	ft_bzero(void *ptr, size_t size)
 	}
 }
 
-int		ft_strlen(char *str)
+size_t	ft_strlen(const char *str)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
@@ -120,13 +120,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	int		i;
 	char	*str;
 
-	len1 = 0;
-	len2 = 0;
 	i = -1;
-	while (s1[len1])
-		len1++;
-	while (s2[len2])
-		len2++;
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
 	str = (char *)malloc((len1 + len2 + 1) * sizeof(char));
 	if (str == 0)
 		return (0);
