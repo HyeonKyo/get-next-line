@@ -6,40 +6,29 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:09 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/18 16:53:19 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/20 16:55:27 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_lines.h"
+#include "get_next_line.h"
 #include <stdio.h>
 
 int		get_next_line(int fd, char **line)
 {
 	ssize_t		n_bytes;
-	int			flag;
 	char		*buf;
 	static char	*backup[OPEN_MAX + 1];
 	char		*tmp;
 
 	if (!(buf = (char *)malloc(BUFFER_SIZE + 1)) || BUFFER_SIZE < 1
-		|| fd < 0 || fd > OPEN_MAX || !(*line) || !buf)
+		|| fd < 0 || fd > OPEN_MAX)
 		return (-1);
+	ft_bzero(buf, BUFFER_SIZE + 1);
 	while ((n_bytes = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
-		flag = 1;
-		//맨 처음 backup이 비어있는 경우
-		if (!(backup[fd]))
-		{
-			backup[fd] = ft_strdup(buf);
-			flag = 0;
-		}
-		//buf없이 backup에개행이 없으면 buf와 backup을 합쳐줌.
-		if (!ft_strchr(backup[fd], '\n') && flag)
-		{
-			backup[fd] = ft_strjoin(backup[fd], buf);
-			flag = 0;
-		}
-		//다시 buf에 개행이 있다면 -> line에 할당하고 개행까지 복사해준 후 
+		//일단 buf와 backup을 합쳐줌.
+		backup[fd] = ft_strjoin(backup[fd], buf);
+		//backup에 개행이 있다면 -> line에 할당하고 개행까지 복사해준 후 
 		//backup의 개행 후를 처음으로 옮겨놓음.
 		//그 후 buf를 해제하고 리턴
 		if ((tmp = ft_strchr(backup[fd], '\n')))
@@ -48,12 +37,6 @@ int		get_next_line(int fd, char **line)
 			*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
 			ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
 			ft_memmove(backup[fd], tmp, ft_strlen(tmp) + 1);
-			//buf를 backup에 합치지 않은 상태라면 합쳐줌.
-		}
-		if (flag)
-			backup[fd] = ft_strjoin(backup[fd], buf);
-		if (tmp)
-		{
 			free(buf);
 			return (1);
 		}
@@ -62,20 +45,269 @@ int		get_next_line(int fd, char **line)
 	}
 	if (n_bytes == 0)
 	{
-		if ((tmp = ft_strchr(backup[fd], '\n')))
-		{
-			tmp++;
-			*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
-			ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
-			free((char *)backup[fd]);
-		}
-		else
-			*line = 0;
+		tmp = ft_strchr(backup[fd], '\0') + 1;
+		*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
+		ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
+		free((char *)backup[fd]);
 	}
 	free(buf);
+	backup[fd] = 0;
 	return (n_bytes);
 }
 
+int main()
+{
+	int             fd;
+	int             i;
+	int             j;
+	char    		*line = 0;
+	char			*lineadress[66];
+
+	j = 1;
+	
+	printf("\n==========================================\n");
+	printf("========== TEST 1 : The Alphabet =========\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/alphabet", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		lineadress[j - 1] = line;
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 66)
+		printf("\nRight number of lines\n");
+	else if (j != 66)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	while (--j > 0)
+		free(lineadress[j - 1]);
+	j = 1;
+
+	printf("\n==========================================\n");
+	printf("========= TEST 2 : Empty Lines ===========\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/empty_lines", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 9)
+		printf("\nRight number of lines\n");
+	else if (j != 9)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	
+	j = 1;
+	printf("\n==========================================\n");
+	printf("======== TEST 3 : The Empty File =========\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/empty_file", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 1)
+		printf("\nRight number of lines\n");
+	else if (j != 1)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	j = 1;
+	printf("\n==========================================\n");
+	printf("========= TEST 4 : One New Line ==========\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/1_newline", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 2)
+		printf("\nRight number of lines\n");
+	else if (j != 2)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	j = 1;
+	printf("\n==========================================\n");
+	printf("========= TEST 5 : Four New Lines ========\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/4_newlines", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 5)
+		printf("\nRight number of lines\n");
+	else if (j != 5)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	j = 1;
+	printf("\n==========================================\n");
+	printf("============== TEST 6 : 42 ===============\n");
+	printf("==========================================\n\n");
+
+	if (!(fd = open("files/41_char", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+	if (!(fd = open("files/42_char", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+	if (!(fd = open("files/43_char", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("|%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("|%s\n", line);
+	free(line);
+	close(fd);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 1)
+		printf("\nRight number of lines\n");
+	else if (j != 1)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	j = 1;
+	printf("\n==========================================\n");
+	printf("============= TEST 7 : Marge =============\n");
+	printf("==========================================\n\n");
+
+	int fd2;
+
+	if (!(fd = open("files/half_marge_top", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	if (!(fd2 = open("files/half_marge_bottom", O_RDONLY)))
+	{
+		printf("\nError in open\n");
+		return (0);
+	}
+	while ((i = get_next_line(fd, &line)) > 0)
+	{
+		printf("%s\n", line);
+		free(line);
+		j++;
+	}
+	free(line);
+	while ((i = get_next_line(fd2, &line)) > 0)
+	{
+		printf("%s\n", line);
+		free(line);
+		j++;
+	}
+	printf("%s\n", line);
+	free(line);
+	close(fd);
+	close(fd2);
+
+	if (i == -1)
+		printf ("\nError in Fonction - Returned -1\n");
+	else if (j == 25)
+		printf("\nRight number of lines\n");
+	else if (j != 25)
+		printf("\nNot Good - Wrong Number Of Lines\n");
+	j = 1;
+	printf("\n==========================================\n");
+	printf("========= TEST 8 : Wrong Input ===========\n");
+	printf("==========================================\n\n");
+
+	if (get_next_line(180, &line) == -1)
+		printf("Well Done, you return -1 if no FD\n\n");
+	else
+		printf("Not Good, you don't return -1 if no FD\n\n");
+	return (0);
+}
+
+
+/*
 int main()
 {
 	char *line;
@@ -88,11 +320,13 @@ int main()
 		printf("n : %d\n", n);
 		printf("line : %s\n", line);
 		printf("---------------------\n");
+		if (n == 0)
+			break ;
 	}
 	close(fd);
 
 	return (0);
-}
+}*/
 
 /*
  *  예외사항
