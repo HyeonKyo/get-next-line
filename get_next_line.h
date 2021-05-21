@@ -20,10 +20,11 @@
 int		get_next_line(int fd, char **line);
 void	ft_bzero(void *ptr, size_t size);
 size_t	ft_strlen(const char *str);
-char	*ft_strdup(char *src);
 void	*ft_memmove(void *dest, const void *src, size_t num);
 size_t	ft_strlcpy(char *dest, char *src, size_t size);
 char	*ft_strchr(char *str, int c);
 char	*ft_strjoin(char const *s1, char const *s2);
+int		clean(int fd, char *buf, char **backup, int n);
+int		gnl_get_one_line(int fd, char **line, char **backup, char *buf);
 
 #endif

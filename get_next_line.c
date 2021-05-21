@@ -13,6 +13,38 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
+int		clean(int fd, char *buf, char **backup, int n)
+{
+	if (buf)
+		free(buf);
+	if (backup[fd]);
+		free((char *)backup[fd]);
+	buf = 0;
+	backup[fd] = 0;
+	return (n);
+}
+
+int		gnl_get_one_line(int fd, char **line, char **backup, char *buf)
+{
+	char	*tmp;
+
+	tmp = ft_strchr(backup[fd], '\n') + 1;
+	if (tmp == 0)
+		tmp = ft_strchr(backup[fd], '\0') + 1;
+	*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
+	if (*line == 0)
+		return (clean(fd, buf, backup, -1));
+	ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
+	if (*line[0] != 0)
+	{
+		ft_memmove(backup[fd], tmp, ft_strlen(tmp) + 1);
+		free(buf);
+		return (1);
+	}
+	else
+		return (clean(fd, buf, backup, 0));
+}
+
 int		get_next_line(int fd, char **line)
 {
 	ssize_t		n_bytes;
@@ -20,7 +52,7 @@ int		get_next_line(int fd, char **line)
 	static char	*backup[OPEN_MAX + 1];
 	char		*tmp;
 
-	if (!(buf = (char *)malloc(BUFFER_SIZE + 1)) || BUFFER_SIZE < 1
+	if (BUFFER_SIZE < 1 || !(buf = (char *)malloc(BUFFER_SIZE + 1))
 		|| fd < 0 || fd > OPEN_MAX)
 		return (-1);
 	ft_bzero(buf, BUFFER_SIZE + 1);
@@ -31,28 +63,15 @@ int		get_next_line(int fd, char **line)
 		//backup에 개행이 있다면 -> line에 할당하고 개행까지 복사해준 후 
 		//backup의 개행 후를 처음으로 옮겨놓음.
 		//그 후 buf를 해제하고 리턴
-		if ((tmp = ft_strchr(backup[fd], '\n')))
-		{
-			tmp++;
-			*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
-			ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
-			ft_memmove(backup[fd], tmp, ft_strlen(tmp) + 1);
-			free(buf);
-			return (1);
-		}
+		if (ft_strchr(backup[fd], '\n'))
+			return (gnl_get_one_line(fd, line, backup, buf));
 		//buf에 개행이 없는 경우 이므로 다시 읽기위해 buf를 비워줌.
 		ft_bzero(buf, BUFFER_SIZE + 1);
 	}
 	if (n_bytes == 0)
-	{
-		tmp = ft_strchr(backup[fd], '\0') + 1;
-		*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
-		ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
-		free((char *)backup[fd]);
-	}
-	free(buf);
-	backup[fd] = 0;
-	return (n_bytes);
+		return (gnl_get_one_line(fd, line, backup, buf));
+	else
+		return (clean(fd, buf, backup[fd], -1));
 }
 
 int main()
