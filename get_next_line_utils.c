@@ -38,16 +38,16 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-void	*ft_memmove(void *dest, const void *src, size_t num)
+int		gnl_strmove(char *dest, char *src, size_t num)
 {
-	char	*dst;
-	char	*s;
-	size_t	i;
+	unsigned char	*dst;
+	unsigned char	*s;
+	size_t			i;
 
 	if ((dest == 0 && src == 0) || num == 0)
-		return (dest);
-	dst = dest;
-	s = (char *)src;
+		return (0);
+	dst = (unsigned char *)dest;
+	s = (unsigned char *)src;
 	i = 0;
 	if (dest <= src)
 	{
@@ -60,28 +60,7 @@ void	*ft_memmove(void *dest, const void *src, size_t num)
 	else
 		while (num--)
 			dst[num] = s[num];
-	return (dest);
-}
-
-size_t	ft_strlcpy(char *dest, char *src, size_t size)
-{
-	size_t	i;
-	size_t	len;
-
-	len = 0;
-	i = 0;
-	if (src == 0)
-		return (0);
-	while (src[len])
-		len++;
-	while (i + 1 < size && src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	if (size != 0)
-		dest[i] = 0;
-	return (len);
+	return (1);
 }
 
 char	*ft_strchr(char *str, int c)

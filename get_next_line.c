@@ -13,6 +13,22 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
+void	gnl_strcpy(char *dest, char *src, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	if (src == 0)
+		return ;
+	while (i + 1 < size && src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	if (size != 0)
+		dest[i] = 0;
+}
+
 int		clean(int fd, char *buf, char **backup, int n)
 {
 	if (buf)
@@ -34,10 +50,11 @@ int		gnl_get_one_line(int fd, char **line, char **backup, char *buf)
 	*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
 	if (*line == 0)
 		return (clean(fd, buf, backup, -1));
-	ft_strlcpy(*line, backup[fd], tmp - backup[fd]);
+	gnl_strcpy(*line, backup[fd], tmp - backup[fd]);
 	if (*line[0] != 0)
 	{
-		ft_memmove(backup[fd], tmp, ft_strlen(tmp) + 1);
+		if(!gnl_strmove(backup[fd], tmp, ft_strlen(tmp) + 1))
+			return (clean(fd, buf, backup[fd], -1));
 		free(buf);
 		return (1);
 	}
