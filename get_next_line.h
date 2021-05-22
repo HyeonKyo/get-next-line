@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:49:32 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/19 15:58:08 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/22 13:27:37 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 void	ft_bzero(void *ptr, size_t size);
 size_t	ft_strlen(const char *str);
-int		gnl_strmove(void *dest, const void *src, size_t num);
+int		gnl_strmove(char *dest, char *src, size_t num);
 void	gnl_strcpy(char *dest, char *src, size_t size);
 char	*ft_strchr(char *str, int c);
 char	*ft_strjoin(char const *s1, char const *s2);

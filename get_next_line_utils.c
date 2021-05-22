@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:41 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/19 19:30:16 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/22 13:50:27 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ int		gnl_strmove(char *dest, char *src, size_t num)
 	dst = (unsigned char *)dest;
 	s = (unsigned char *)src;
 	i = 0;
-	if (dest <= src)
+	if (num == 1)
+		dst[i] = 0;
+	else if (dest <= src)
 	{
 		while (i < num)
 		{

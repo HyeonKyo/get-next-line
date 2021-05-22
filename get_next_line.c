@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:09 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/20 16:55:27 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/22 16:05:03 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int		clean(int fd, char *buf, char **backup, int n)
 {
 	if (buf)
 		free(buf);
-	if (backup[fd]);
+	if (backup[fd])
 		free((char *)backup[fd]);
 	buf = 0;
 	backup[fd] = 0;
@@ -43,20 +43,27 @@ int		clean(int fd, char *buf, char **backup, int n)
 int		gnl_get_one_line(int fd, char **line, char **backup, char *buf)
 {
 	char	*tmp;
+	size_t	len;
 
-	tmp = ft_strchr(backup[fd], '\n') + 1;
+	tmp = ft_strchr(backup[fd], '\n');
 	if (tmp == 0)
-		tmp = ft_strchr(backup[fd], '\0') + 1;
-	*line = (char *)malloc((tmp - backup[fd]) * sizeof(char));
+		tmp = ft_strchr(backup[fd], '\0');
+	len = tmp - backup[fd] + 1;
+	*line = (char *)malloc(len * sizeof(char));
 	if (*line == 0)
 		return (clean(fd, buf, backup, -1));
-	gnl_strcpy(*line, backup[fd], tmp - backup[fd]);
-	if (*line[0] != 0)
+	gnl_strcpy(*line, backup[fd], len);
+	if (backup[fd] && backup[fd][0])
 	{
-		if(!gnl_strmove(backup[fd], tmp, ft_strlen(tmp) + 1))
-			return (clean(fd, buf, backup[fd], -1));
-		free(buf);
-		return (1);
+		if (tmp[0] == 0)
+			return (clean(fd, buf, backup, 0));
+		else
+		{
+			if(!gnl_strmove(backup[fd], tmp + 1, ft_strlen(tmp) + 1))
+				return (clean(fd, buf, backup, -1));
+			free(buf);
+			return (1);
+		}
 	}
 	else
 		return (clean(fd, buf, backup, 0));
@@ -67,11 +74,11 @@ int		get_next_line(int fd, char **line)
 	ssize_t		n_bytes;
 	char		*buf;
 	static char	*backup[OPEN_MAX + 1];
-	char		*tmp;
 
+	buf = 0;
 	if (BUFFER_SIZE < 1 || !(buf = (char *)malloc(BUFFER_SIZE + 1))
-		|| fd < 0 || fd > OPEN_MAX)
-		return (-1);
+		|| fd < 0 || fd > OPEN_MAX || !line)
+		return (clean(fd, buf, backup, -1));
 	ft_bzero(buf, BUFFER_SIZE + 1);
 	while ((n_bytes = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
@@ -88,9 +95,9 @@ int		get_next_line(int fd, char **line)
 	if (n_bytes == 0)
 		return (gnl_get_one_line(fd, line, backup, buf));
 	else
-		return (clean(fd, buf, backup[fd], -1));
+		return (clean(fd, buf, backup, -1));
 }
-
+/*
 int main()
 {
 	int             fd;
@@ -100,7 +107,7 @@ int main()
 	char			*lineadress[66];
 
 	j = 1;
-	
+
 	printf("\n==========================================\n");
 	printf("========== TEST 1 : The Alphabet =========\n");
 	printf("==========================================\n\n");
@@ -129,7 +136,7 @@ int main()
 	while (--j > 0)
 		free(lineadress[j - 1]);
 	j = 1;
-
+	
 	printf("\n==========================================\n");
 	printf("========= TEST 2 : Empty Lines ===========\n");
 	printf("==========================================\n\n");
@@ -341,28 +348,26 @@ int main()
 		printf("Not Good, you don't return -1 if no FD\n\n");
 	return (0);
 }
+*/
 
-
-/*
 int main()
 {
 	char *line;
 	int fd;
 	int	n;
 
-	fd = open("text.txt", O_RDONLY);
+	fd = open("43_with_nl", O_RDONLY);
 	while ((n = get_next_line(fd, &line)) >= 0)
 	{
-		printf("n : %d\n", n);
-		printf("line : %s\n", line);
-		printf("---------------------\n");
+		//printf("n : %d\n", n);
+		printf("%s\n", line);
 		if (n == 0)
 			break ;
 	}
 	close(fd);
 
 	return (0);
-}*/
+}
 
 /*
  *  예외사항
