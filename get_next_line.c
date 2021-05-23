@@ -6,7 +6,7 @@
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 16:48:09 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/22 16:05:03 by hyeonkki         ###   ########.fr       */
+/*   Updated: 2021/05/23 15:38:56 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ void	gnl_strcpy(char *dest, char *src, size_t size)
 
 	i = 0;
 	if (src == 0)
+	{
+		dest[i] = 0;
 		return ;
+	}
 	while (i + 1 < size && src[i])
 	{
 		dest[i] = src[i];
@@ -32,11 +35,15 @@ void	gnl_strcpy(char *dest, char *src, size_t size)
 int		clean(int fd, char *buf, char **backup, int n)
 {
 	if (buf)
+	{
 		free(buf);
+		buf = 0;
+	}
 	if (backup[fd])
+	{
 		free((char *)backup[fd]);
-	buf = 0;
-	backup[fd] = 0;
+		backup[fd] = 0;
+	}
 	return (n);
 }
 
@@ -82,18 +89,15 @@ int		get_next_line(int fd, char **line)
 	ft_bzero(buf, BUFFER_SIZE + 1);
 	while ((n_bytes = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
-		//일단 buf와 backup을 합쳐줌.
 		backup[fd] = ft_strjoin(backup[fd], buf);
-		//backup에 개행이 있다면 -> line에 할당하고 개행까지 복사해준 후 
-		//backup의 개행 후를 처음으로 옮겨놓음.
-		//그 후 buf를 해제하고 리턴
-		if (ft_strchr(backup[fd], '\n'))
-			return (gnl_get_one_line(fd, line, backup, buf));
-		//buf에 개행이 없는 경우 이므로 다시 읽기위해 buf를 비워줌.
+			if (ft_strchr(backup[fd], '\n'))
+		return (gnl_get_one_line(fd, line, backup, buf));
 		ft_bzero(buf, BUFFER_SIZE + 1);
 	}
 	if (n_bytes == 0)
+	{
 		return (gnl_get_one_line(fd, line, backup, buf));
+	}
 	else
 		return (clean(fd, buf, backup, -1));
 }
@@ -349,26 +353,29 @@ int main()
 	return (0);
 }
 */
-
+/*
 int main()
 {
 	char *line;
 	int fd;
 	int	n;
+	int	i;
 
 	fd = open("43_with_nl", O_RDONLY);
-	while ((n = get_next_line(fd, &line)) >= 0)
+	i = 0;
+	while ((n = get_next_line(fd, &line)) >= 0 && i < 3)
 	{
-		//printf("n : %d\n", n);
-		printf("%s\n", line);
-		if (n == 0)
-			break ;
+		i++;
+		printf("n : %d\n", n);
+		printf("line : %s\n", line);
+		//if (n == 0)
+		//	break ;
 	}
 	close(fd);
 
 	return (0);
 }
-
+*/
 /*
  *  예외사항
  *  - EOF까지 읽어서 read의 리턴값이 0인 경우인데,
