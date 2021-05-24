@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/24 16:19:54 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/24 16:33:53 by hyeonkki         ###   ########.fr       */
+/*   Created: 2021/05/24 16:24:48 by hyeonkki          #+#    #+#             */
+/*   Updated: 2021/05/24 16:34:09 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	gnl_strcpy(char *dest, char *src, size_t size)
 {

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/14 16:49:32 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/23 16:13:51 by hyeonkki         ###   ########.fr       */
+/*   Created: 2021/05/24 16:20:43 by hyeonkki          #+#    #+#             */
+/*   Updated: 2021/05/24 18:09:04 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <limits.h>
-# include <fcntl.h>
 
 void	ft_bzero(void *ptr, size_t size);
 size_t	ft_strlen(const char *str);
-int		gnl_strmove(char *dest, char *src, size_t num);
+int		gnl_strmove(int fd, char **backup, char *src);
 void	gnl_strcpy(char *dest, char *src, size_t size);
 char	*ft_strchr(char *str, int c);
 char	*ft_strjoin(char const *s1, char const *s2);

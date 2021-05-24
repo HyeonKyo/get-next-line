@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyeonkki <hyeonkki@student.42.kr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/24 16:20:48 by hyeonkki          #+#    #+#             */
-/*   Updated: 2021/05/24 16:20:49 by hyeonkki         ###   ########.fr       */
+/*   Created: 2021/05/24 16:20:53 by hyeonkki          #+#    #+#             */
+/*   Updated: 2021/05/24 16:20:54 by hyeonkki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	ft_bzero(void *ptr, size_t size)
 {

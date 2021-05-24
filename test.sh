@@ -31,6 +31,14 @@ PROJ_PATH=../get_next_line
 # ----------------------------------------
 
 # 실제 프로젝트 폴더 위치로 이동
+!/bin/bash
+echo -e "\033[32;1m"WAR MACHINE v2019"\033[m"
+read $a
+git clone https://github.com/C4r4c0l3/gnl-war-machine-v2019.git
+cd gnl-war-machine-v2019/
+sed -i "" 's/..\/..\/get_next_line/..\//' my_config.sh
+cd ..
+
 REAL_PATH=$(cd $(dirname $0) && cd ${PROJ_PATH} && pwd)
 echo 프로젝트 위치: $REAL_PATH
 cd $REAL_PATH
